@@ -1,12 +1,13 @@
 package utils
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/astaxie/beego"
+	"github.com/beego/beego/v2/client/orm"
 	//切记：导入驱动包
 	_ "github.com/go-sql-driver/mysql"
 	"log"
-	"database/sql"
 )
 
 var db *sql.DB
@@ -17,7 +18,7 @@ func InitMysql() {
 	driverName := beego.AppConfig.String("driverName")
 
 	//注册数据库驱动
-	//orm.RegisterDriver(driverName, orm.DRMySQL)
+	orm.RegisterDriver(driverName, orm.DRMySQL)
 
 	//数据库连接
 	user := beego.AppConfig.String("mysqluser")
@@ -38,7 +39,7 @@ func InitMysql() {
 	}
 }
 
-//操作数据库
+// 操作数据库
 func ModifyDB(sql string, args ...interface{}) (int64, error) {
 	result, err := db.Exec(sql, args...)
 	if err != nil {
@@ -53,7 +54,7 @@ func ModifyDB(sql string, args ...interface{}) (int64, error) {
 	return count, nil
 }
 
-//创建用户表
+// 创建用户表
 func CreateTableWithUser() {
 	sql := `CREATE TABLE IF NOT EXISTS users(
 		id INT(4) PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -65,7 +66,7 @@ func CreateTableWithUser() {
 	ModifyDB(sql)
 }
 
-//查询
+// 查询
 func QueryRowDB(sql string) *sql.Row {
 	return db.QueryRow(sql)
 }
