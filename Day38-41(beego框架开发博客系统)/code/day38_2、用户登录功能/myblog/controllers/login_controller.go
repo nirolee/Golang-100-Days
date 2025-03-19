@@ -1,9 +1,10 @@
 package controllers
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"github.com/astaxie/beego"
-	"myblogweb/utils"
 	"myblog/models"
 )
 
@@ -19,8 +20,9 @@ func (this *LoginController) Post() {
 	username := this.GetString("username")
 	password := this.GetString("password")
 	fmt.Println("username:", username, ",password:", password)
-
-	id := models.QueryUserWithParam(username, utils.MD5(password))
+	hash := md5.Sum([]byte(password))
+	password = hex.EncodeToString(hash[:])
+	id := models.QueryUserWithParam(username, password)
 	fmt.Println("id:", id)
 	if id > 0 {
 		this.Data["json"] = map[string]interface{}{"code": 1, "message": "登录成功"}
@@ -29,4 +31,3 @@ func (this *LoginController) Post() {
 	}
 	this.ServeJSON()
 }
-
